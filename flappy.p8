@@ -2,29 +2,96 @@ pico-8 cartridge // http://www.pico-8.com
 version 42
 __lua__
 function _init()
+		
 	cls()
-	map()
-	
-	spr(21,80,0,2,1)
-	spr(21,80,8,2,1)
-	spr(21,80,16,2,1)
-	spr(21,80,24,2,2)
-
-	spr(5,80,80,2,2)	
-	spr(21,80,96,2,1)
-	spr(21,80,104,2,1)
-	spr(21,80,112,2,1)
-	spr(21,80,120,2,1)
-	
+	map(0,0)
+	bird={x=40, y=63, s=1}
+	g=.18
+	v=0
+	t=3.2
+	trspd=.5
+	trgap=1
+	--tree={x=120, yb=32, yt=8}
+	forest={}
 end
 
 function _update()
 
+	if btnp(❎) or btnp(🅾️) then
+		v=v-t
+		bird.s=3
+	else
+	 bird.s=1
+	end
+	
+	for tree in all(forest) do
+		tree.x = tree.x-.5
+	end
+	
+	--check if the left most tree
+	--if off screen, if so delete
+	if forest[1] and forest[1].x <= (-16) then
+		del(forest, forest[1])
+	end
+	
+	trgap=trgap-1
+	if trgap<=0 then
+		coin=(flr(rnd(32)))
+		if coin==0 then
+			add(forest,gentree())
+		end
+	end
+	
+	updatemap()
+	v=v+g
+	bird.y=bird.y+v
+	if bird.y <= 0 then
+		bird.y = 0
+		v=0
+	end
+	
 end
 
 function _draw()
-	spr(1,32,63,2,2)
+	map(0, 0, flr(backx),0)
+	for tree in all(forest) do
+		drawtree(tree)
+	end
+	spr(bird.s,bird.x,bird.y,2,2)
+	print("\#0trees:     ",1,1,7)
+	print(#forest,24,1,6)
 
+end
+-->8
+--tree functions
+
+function drawtree(tree)
+	spr(5, tree.x, tree.yb, 2, 2)
+	for i=1,(flr(128-tree.yb)/8) do
+		spr(21,tree.x,tree.yb+i*8,2,1)
+	end	
+	spr(37, tree.x,tree.yt, 2,1)
+	for i=1,(ceil(tree.yt/8)) do
+	 spr(21,tree.x,tree.yt-i*8,2,1)
+	end
+end
+
+function gentree()
+	cut=rnd(78)
+	ntree={x=129,yb=(cut+32),yt=(cut+32-(rnd(24)+24))}
+	trgap=128
+	return ntree
+end
+-->8
+--background
+backx=0
+
+function updatemap()
+	if (backx<=(-128)) then
+		backx=0
+ else
+ 	backx-=.1
+ end   
 end
 __gfx__
 00000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
