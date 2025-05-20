@@ -5,51 +5,63 @@ function _init()
 		
 	cls()
 	map(0,0)
-	bird={x=40, y=63, s=1}
+	bird={
+		x=40,
+		y=63,
+		s=1,
+		alive=true,
+		score=0
+		}
+		
 	g=.18
 	v=0
 	t=3.2
 	trspd=.5
 	trgap=1
-	--tree={x=120, yb=32, yt=8}
 	forest={}
 end
 
 function _update()
-
-	if btnp(❎) or btnp(🅾️) then
-		v=v-t
-		bird.s=3
-	else
-	 bird.s=1
-	end
 	
-	for tree in all(forest) do
-		tree.x = tree.x-.5
-	end
+	treecheck()
+	
+	if bird.alive==true then
+	
+		if btnp(❎) or btnp(🅾️) then
+			v=v-t
+			bird.s=3
+		else
+	 	bird.s=1
+		end
+	
+		for tree in all(forest) do
+			tree.x = tree.x-.5
+		end
 	
 	--check if the left most tree
 	--if off screen, if so delete
-	if forest[1] and forest[1].x <= (-16) then
-		del(forest, forest[1])
-	end
-	
-	trgap=trgap-1
-	if trgap<=0 then
-		coin=(flr(rnd(32)))
-		if coin==0 then
-			add(forest,gentree())
+		if forest[1] and forest[1].x <= (-16) then
+			del(forest, forest[1])
 		end
-	end
 	
-	updatemap()
-	v=v+g
-	bird.y=bird.y+v
-	if bird.y <= 0 then
-		bird.y = 0
-		v=0
-	end
+		trgap=trgap-1
+		if trgap<=0 then
+			coin=(flr(rnd(32)))
+			if coin==0 then
+				add(forest,gentree())
+			end
+		end
 	
+		updatemap()
+		v=v+g
+		bird.y=bird.y+v
+		if bird.y <= 0 then
+			bird.y = 0
+			v=0
+		end
+	else
+		
+	end
 end
 
 function _draw()
@@ -58,8 +70,8 @@ function _draw()
 		drawtree(tree)
 	end
 	spr(bird.s,bird.x,bird.y,2,2)
-	print("\#0trees:     ",1,1,7)
-	print(#forest,24,1,6)
+	print("\#0score:     ",1,1,7)
+	print(bird.score,24,1,6)
 
 end
 -->8
@@ -78,9 +90,55 @@ end
 
 function gentree()
 	cut=rnd(78)
-	ntree={x=129,yb=(cut+32),yt=(cut+32-(rnd(24)+24))}
+	ntree={
+		x=129,
+		yb=(cut+32),
+		yt=(cut+32-(rnd(24)+24)),
+		scored=false}
 	trgap=128
 	return ntree
+end
+
+function treecheck()
+	if forest[1] and forest[1].scored==false then
+		if bird.x+2 > forest[1].x+15 then
+			forest[1].scored=true
+			bird.score=bird.score+1
+		 
+		else
+			colcheck(forest[1])
+		end
+	else
+		if forest[2] then
+		 colcheck(forest[2])	
+		end
+	end
+end
+
+function colcheck(tree)
+	birdbox={
+		xmin=bird.x+2,
+		xmax=bird.x+13,
+		ymin=bird.y+5,
+		ymax=bird.y+10
+		}
+	if birdbox.xmax > tree.x+1 and
+		birdbox.xmax < tree.x+15
+	then
+		if birdbox.ymax > tree.yb+2 or
+			birdbox.ymin < tree.yt+6
+		then
+			bird.alive=false
+		end
+	elseif birdbox.xmin > tree.x+1 and 
+		birdbox.xmin < tree.x+15
+	then
+		if birdbox.ymax > tree.yb+2 or
+			birdbox.ymin < tree.yt+6
+		then
+			bird.alive=false
+		end
+	end	
 end
 -->8
 --background
@@ -126,6 +184,9 @@ ccc6666cccc666cc0000000000000000000000000000000000000000000000000000000000000000
 cccccccccccccccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 cccccccccccccccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 cccccccccccccccc0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+__gff__
+0000000000010100000000000000000000000000000101000000000000000000000000000001010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
+0000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 __map__
 2021101010101010101010101010101020211010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
 3031101010101010101010101010101030311010101010101010101010101010000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000000
