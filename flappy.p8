@@ -7,14 +7,14 @@ function _init()
 	map(0,0)
 	bird={
 		x=40,
-		y=63,
+		y=43,
 		s=1,
 		alive=true,
 		score=0
 		}
 		
 	g=.18
-	v=0
+	v=-2
 	t=3.2
 	trspd=.5
 	trgap=1
@@ -118,7 +118,7 @@ end
 
 function colcheck(tree)
 	birdbox={
-		xmin=bird.x+2,
+		xmin=bird.x+4,
 		xmax=bird.x+13,
 		ymin=bird.y+5,
 		ymax=bird.y+10
@@ -127,7 +127,7 @@ function colcheck(tree)
 		birdbox.xmax < tree.x+15
 	then
 		if birdbox.ymax > tree.yb+3 or
-			birdbox.ymin < tree.yt+6
+			birdbox.ymin < tree.yt+5
 		then
 			bird.alive=false
 		end
@@ -135,7 +135,7 @@ function colcheck(tree)
 		birdbox.xmin < tree.x+15
 	then
 		if birdbox.ymax > tree.yb+2 or
-			birdbox.ymin < tree.yt+6
+			birdbox.ymin < tree.yt+5
 		then
 			bird.alive=false
 		end
