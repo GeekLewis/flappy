@@ -19,10 +19,14 @@ function _init()
 	trspd=.5
 	trgap=1
 	forest={}
+
+	_update = gameupdate
+	_draw = gamedraw
 end
 
-function _update()
-	
+-->8
+--game update
+function gameupdate()
 	treecheck()
 	
 	if bird.alive==true then
@@ -64,8 +68,9 @@ function _update()
 		
 	end
 end
-
-function _draw()
+-->8
+--game draw
+function gamedraw()
 	map(0, 0, flr(backx),0)
 	for tree in all(forest) do
 		drawtree(tree)
